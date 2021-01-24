@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QPainter>
 #include <QFileDialog> // otwieranie plikow
+#include <QTextStream>
 
 namespace Ui {
 class MainWindow;
@@ -30,6 +31,10 @@ private slots:
     void paintEvent(QPaintEvent*);
 
     void on_pushButton_clicked();
+
+    void on_czarnobialy_clicked();
+    void paint_on_black_and_white();
+    void colorPicker(int x,int y);
 
 private:
     // ui to wskaźnik za pomocą którego mamy dostęp

@@ -120,6 +120,34 @@ void MainWindow::on_pushButton_clicked()
         // odpowiadających wymiarom naszego pola rysowania
         // do wyświetlanego w nim obiektu QImage
         *img = img_org->copy(0,0,width,height);
+
         update();
     }
+}
+void MainWindow::colorPicker(int x,int y){
+    QRgb color = img->pixel(x,y);
+    QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+}
+
+void MainWindow::paint_on_black_and_white(){
+    // przechodzimy po wszystkich wierszach obrazu
+    for(int i=0; i<height; i++)
+    {
+        for(int j=0; j<width; j++)
+        {
+            QRgb color = img->pixel(i,j);
+            QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            int skalaSzarosci =(qRed(color) + qGreen(color) + qBlue(color))/3;
+            if (skalaSzarosci<128){
+                 img->setPixel(i, j, qRgb(0,0,0));
+            }else {
+                img->setPixel(i,j, qRgb(255,255,255));
+            }
+        }
+    }
+}
+
+void MainWindow::on_czarnobialy_clicked()
+{
+    paint_on_black_and_white();
 }
