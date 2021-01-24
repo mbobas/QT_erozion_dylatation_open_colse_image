@@ -19,7 +19,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // Tworzymy obiekt klasy QImage o wymiarach równych wymiarom ramki
     // Format_RGB32 to 32 bitowe RGB (z kanałem alfa ustawionym na wartość 255)
     img = new QImage(width, height, QImage::Format_RGB32);
-
+    img_copy = new QImage(width, height, QImage::Format_RGB32);
+    imgbw = new QImage(width, height, QImage::Format_RGB32);
+    imgbw_copy = new QImage(width, height, QImage::Format_RGB32);
     // Wczytujemy plik graficzny do drugiego obiektu klasy QImage
     // jeżeli ścieżka zaczyna się od dwukropka tzn. że plik
     // znajduje się w zasobach projektu
@@ -29,6 +31,8 @@ MainWindow::MainWindow(QWidget *parent) :
     // który będzie wyświetlany na ekranie
     // wymiary fragmentu odpowiadają wymiarom pola rysunkowego
     *img = img_org->copy(0,0,width,height);
+    //tworzymy kopie zapasowa
+    *img_copy = img->copy(0,0,width,height);
 
     // Zamiast kopiowania fragmentu, można przeskalować obraz
     // *img = img_org->scaled(width,height);
@@ -83,6 +87,23 @@ void MainWindow::clean()
     }
 }
 
+// Funkcja zamalowująca na czarno wszystkie piksele obrazu *img
+void MainWindow::reset()
+{
+    //img_org = new QImage(":/flower.jpg");
+
+    // Kopiujemy fragment wczytanego obrazu do obiektu klasy QImage
+    // który będzie wyświetlany na ekranie
+    // wymiary fragmentu odpowiadają wymiarom pola rysunkowego
+    *img = img_copy->copy(0,0,width,height);
+
+    // Zamiast kopiowania fragmentu, można przeskalować obraz
+    // *img = img_org->scaled(width,height);
+    update();
+
+}
+
+
 //*****************************************************************************************************
 
 
@@ -120,6 +141,7 @@ void MainWindow::on_pushButton_clicked()
         // odpowiadających wymiarom naszego pola rysowania
         // do wyświetlanego w nim obiektu QImage
         *img = img_org->copy(0,0,width,height);
+        *img_copy = img->copy(0,0,width,height);
 
         update();
     }
@@ -131,23 +153,35 @@ void MainWindow::colorPicker(int x,int y){
 
 void MainWindow::paint_on_black_and_white(){
     // przechodzimy po wszystkich wierszach obrazu
+    *imgbw = img->copy(0,0,width,height);
     for(int i=0; i<height; i++)
     {
         for(int j=0; j<width; j++)
         {
-            QRgb color = img->pixel(i,j);
-            QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            QRgb color = imgbw->pixel(i,j);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
             int skalaSzarosci =(qRed(color) + qGreen(color) + qBlue(color))/3;
             if (skalaSzarosci<128){
-                 img->setPixel(i, j, qRgb(0,0,0));
+                 imgbw->setPixel(i, j, qRgb(0,0,0));
             }else {
-                img->setPixel(i,j, qRgb(255,255,255));
+                imgbw->setPixel(i,j, qRgb(255,255,255));
             }
         }
     }
+    *img = imgbw->copy(0,0,width,height);
+    update();
+}
+
+void MainWindow::check_surrounding_8pixels(){
+    //sprawdzanie 8 pixeli otaczajacych
 }
 
 void MainWindow::on_czarnobialy_clicked()
 {
     paint_on_black_and_white();
+}
+
+void MainWindow::on_reset_clicked()
+{
+    reset();
 }

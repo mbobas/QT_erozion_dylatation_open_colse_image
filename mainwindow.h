@@ -35,13 +35,17 @@ private slots:
     void on_czarnobialy_clicked();
     void paint_on_black_and_white();
     void colorPicker(int x,int y);
+    void reset();
+
+    void on_reset_clicked();
+    void check_surrounding_8pixels();
 
 private:
     // ui to wskaźnik za pomocą którego mamy dostęp
     // do elementów interfejsu użytkownika
     Ui::MainWindow *ui;
 
-    QImage *img, *img_org;  // wysiwetalnie // img_org drugi obraz
+    QImage *img, *img_copy, *img_org, *imgbw, *imgbw_copy;  // wysiwetalnie // img_org drugi obraz
     int width, height, startX, startY;
 
     void clean();
