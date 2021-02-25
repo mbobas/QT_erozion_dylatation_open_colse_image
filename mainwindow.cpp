@@ -343,7 +343,7 @@ void MainWindow::erozja(){
             //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
             int kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
             //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
-            if (kolorSasiada == 0 ) {
+            if (kolorSasiada > 0 ) {
                 sumaBialychSasiadow++;
                 //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
             }
@@ -420,11 +420,11 @@ void MainWindow::erozja(){
             }
 
 
-            //jesli sumaCzarnychSasiadow jes wieksza od zera to malujemy na czarno wybrany pixel
+            //jesli sumaBialychSasiadow jes wieksza od zera to malujemy na biało wybrany pixel
             if (sumaBialychSasiadow > 0){
                 img->setPixel(i, j, qRgb(255,255,255));
             }else {
-                //malujemy na bialo jeś☺li brak czarnych sasiadow
+                //malujemy na czarno jeś☺li brak czarnych sasiadow
                  img->setPixel(i,j, qRgb(0,0,0));
             }
         }
