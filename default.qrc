@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="sv">sv.jpg</file>
+    </qresource>
+</RCC>

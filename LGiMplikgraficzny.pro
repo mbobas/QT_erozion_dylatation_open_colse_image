@@ -34,4 +34,5 @@ FORMS += \
         mainwindow.ui
 
 RESOURCES += \
+    default.qrc \
     obrazki.qrc

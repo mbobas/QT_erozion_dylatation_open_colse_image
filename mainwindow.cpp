@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Wczytujemy plik graficzny do drugiego obiektu klasy QImage
     // jeżeli ścieżka zaczyna się od dwukropka tzn. że plik
     // znajduje się w zasobach projektu
-    img_org = new QImage(":/flower.jpg");
+    img_org = new QImage(":/sv");
 
     // Kopiujemy fragment wczytanego obrazu do obiektu klasy QImage
     // który będzie wyświetlany na ekranie
