@@ -6,6 +6,8 @@
 #include <QPainter>
 #include <QFileDialog> // otwieranie plikow
 #include <QTextStream>
+#include <QString>
+using namespace std;
 
 namespace Ui {
 class MainWindow;
@@ -38,15 +40,28 @@ private slots:
     void reset();
 
     void on_reset_clicked();
-    void check_surrounding_8pixels();
+    void check_surrounding_8pixels(int x, int y);
+    void dylatacja();
+    void erozja();
+
+    void on_dylatacja_clicked();
+
+    void on_komunikatChange(string komunikat);
+
+    void on_erozja_clicked();
 
 private:
     // ui to wskaźnik za pomocą którego mamy dostęp
     // do elementów interfejsu użytkownika
     Ui::MainWindow *ui;
 
-    QImage *img, *img_copy, *img_org, *imgbw, *imgbw_copy;  // wysiwetalnie // img_org drugi obraz
+    QImage *img, *img_copy, *img_org, *imgbw, *imgbw_copy, *imgdyl, *imgero;  // wysiwetalnie // img_org drugi obraz
     int width, height, startX, startY;
+
+    bool czarnobialy = false;
+
+    string komunikat  = "KOMUNIKAT";
+
 
     void clean();
 

@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+ #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 // Konstruktor
@@ -16,12 +16,16 @@ MainWindow::MainWindow(QWidget *parent) :
     width = ui->frame->width();
     height = ui->frame->height();
 
+    QTextStream(stdout) << "W: " << width << "H: " << height;
+
     // Tworzymy obiekt klasy QImage o wymiarach równych wymiarom ramki
     // Format_RGB32 to 32 bitowe RGB (z kanałem alfa ustawionym na wartość 255)
     img = new QImage(width, height, QImage::Format_RGB32);
     img_copy = new QImage(width, height, QImage::Format_RGB32);
     imgbw = new QImage(width, height, QImage::Format_RGB32);
     imgbw_copy = new QImage(width, height, QImage::Format_RGB32);
+    imgdyl = new QImage(width, height, QImage::Format_RGB32);
+    imgero = new QImage(width, height, QImage::Format_RGB32);
     // Wczytujemy plik graficzny do drugiego obiektu klasy QImage
     // jeżeli ścieżka zaczyna się od dwukropka tzn. że plik
     // znajduje się w zasobach projektu
@@ -36,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Zamiast kopiowania fragmentu, można przeskalować obraz
     // *img = img_org->scaled(width,height);
+    on_komunikatChange(komunikat);
 }
 //*****************************************************************************************************
 
@@ -100,6 +105,8 @@ void MainWindow::reset()
     // Zamiast kopiowania fragmentu, można przeskalować obraz
     // *img = img_org->scaled(width,height);
     update();
+    czarnobialy = false;
+    on_komunikatChange("Reset wykonany");
 
 }
 
@@ -170,18 +177,303 @@ void MainWindow::paint_on_black_and_white(){
     }
     *img = imgbw->copy(0,0,width,height);
     update();
+    on_komunikatChange("Obraz zmieniony na Czarno-Bioały");
 }
 
-void MainWindow::check_surrounding_8pixels(){
-    //sprawdzanie 8 pixeli otaczajacych
+void MainWindow::check_surrounding_8pixels(int x, int y){
+
+
+    //sprawdzanie 8 pixeli otaczajacych true lub false - poźniej
+}
+
+
+void MainWindow::dylatacja(){
+
+    //TŁO - biały
+    //obraz - czarny
+    //napotykamy na czarnego sąsiada, to zamalowywyjemy pobrany punkt - pixel ma 8'u sąsiadów.
+
+    // przechodzimy po wszystkich wierszach obrazu
+    //dane pobieramy z imgdyl
+    //zmiana danych nastepuje na pliku img...
+
+    *imgdyl = img->copy(0,0,width,height);
+
+
+    //wypelniamy obrzeza rami kolorem TŁA - białym - wypelniamy niewidocznych sasiadow
+//    for (int i=0; height-startX+1; i++){
+//        img->setPixel(startX-1, startY+i, qRgb(255,255,255));
+//        //QTextStream(stdout) << "ustawiono tło białe: " << startX-1 << " " << startY+i;
+//    }
+
+
+    for(int i=0; i<height; i++)
+    {
+        for(int j=0; j<width; j++)
+        {
+            int sumaCzarnychSasiadow=0;
+            //pobieramy kolor pixela i 8 sąsiadów
+
+            QRgb color = imgdyl->pixel(i,j);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            int kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada == 0 ) {
+                sumaCzarnychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+            color = imgdyl->pixel(i-1,j-1);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada == 0 ) {
+                sumaCzarnychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+            color = imgdyl->pixel(i,j-1);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada == 0 ) {
+                sumaCzarnychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+            color = imgdyl->pixel(i+1,j+1);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada == 0 ) {
+                sumaCzarnychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+            color = imgdyl->pixel(i-1,j);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada == 0 ) {
+                sumaCzarnychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+            color = imgdyl->pixel(i+1,j);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada == 0 ) {
+                sumaCzarnychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+            color = imgdyl->pixel(i-1,j-1);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada == 0 ) {
+                sumaCzarnychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+            color = imgdyl->pixel(i,j-1);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada == 0 ) {
+                sumaCzarnychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+            color = imgdyl->pixel(i+1,j-1);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada == 0 ) {
+                sumaCzarnychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+
+            //jesli sumaCzarnychSasiadow jes wieksza od zera to malujemy na czarno wybrany pixel
+            if (sumaCzarnychSasiadow > 0){
+                img->setPixel(i, j, qRgb(0,0,0));
+            }else {
+                //malujemy na bialo jeś☺li brak czarnych sasiadow
+                 img->setPixel(i,j, qRgb(255,255,255));
+            }
+        }
+    }
+
+    //*img = imgdyl->copy(0,0,width,height);
+    update();
+
+    //dylatacja
+    on_komunikatChange("Dylatacja zrobiona");
+}
+
+void MainWindow::erozja(){
+
+    //TŁO - biały
+    //obraz - czarny
+    //napotykamy na czarnego sąsiada, to zamalowywyjemy pobrany punkt - pixel ma 8'u sąsiadów.
+
+    // przechodzimy po wszystkich wierszach obrazu
+    //dane pobieramy z imgdyl
+    //zmiana danych nastepuje na pliku img...
+
+    *imgero = img->copy(0,0,width,height);
+
+
+    //wypelniamy obrzeza rami kolorem TŁA - białym - wypelniamy niewidocznych sasiadow
+//    for (int i=0; height-startX+1; i++){
+//        img->setPixel(startX-1, startY+i, qRgb(255,255,255));
+//        //QTextStream(stdout) << "ustawiono tło białe: " << startX-1 << " " << startY+i;
+//    }
+
+
+    for(int i=0; i<height; i++)
+    {
+        for(int j=0; j<width; j++)
+        {
+            int sumaBialychSasiadow=0;
+            //pobieramy kolor pixela i 8 sąsiadów
+
+            QRgb color = imgero->pixel(i,j);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            int kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada == 0 ) {
+                sumaBialychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+            color = imgero->pixel(i-1,j-1);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada > 0 ) {
+                sumaBialychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+            color = imgero->pixel(i,j-1);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada > 0  ) {
+                sumaBialychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+            color = imgero->pixel(i+1,j+1);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada > 0  ) {
+                sumaBialychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+            color = imgero->pixel(i-1,j);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada > 0 ) {
+                sumaBialychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+            color = imgero->pixel(i+1,j);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada > 0 ) {
+                sumaBialychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+            color = imgero->pixel(i-1,j-1);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada > 0 ) {
+                sumaBialychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+            color = imgero->pixel(i,j-1);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada > 0 ) {
+                sumaBialychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+            color = imgero->pixel(i+1,j-1);
+            //QTextStream(stdout) << qRed(color) << qGreen(color) << qBlue(color);
+            kolorSasiada =(qRed(color) + qGreen(color) + qBlue(color));
+            //jesli sasiad jest czarny to sumaCzarnychSasiadow ++
+            if (kolorSasiada > 0 ) {
+                sumaBialychSasiadow++;
+                //QTextStream(stdout) << "sumaCzarnychSasiadow" << sumaCzarnychSasiadow;
+            }
+
+
+            //jesli sumaCzarnychSasiadow jes wieksza od zera to malujemy na czarno wybrany pixel
+            if (sumaBialychSasiadow > 0){
+                img->setPixel(i, j, qRgb(255,255,255));
+            }else {
+                //malujemy na bialo jeś☺li brak czarnych sasiadow
+                 img->setPixel(i,j, qRgb(0,0,0));
+            }
+        }
+    }
+
+    //*img = imgdyl->copy(0,0,width,height);
+    update();
+
+    //dylatacja
+    on_komunikatChange("Dylatacja zrobiona");
 }
 
 void MainWindow::on_czarnobialy_clicked()
 {
+    czarnobialy = true;
     paint_on_black_and_white();
 }
 
 void MainWindow::on_reset_clicked()
 {
     reset();
+
+}
+
+void MainWindow::on_dylatacja_clicked()
+{
+    if (czarnobialy == true) {
+        dylatacja();
+        on_komunikatChange("nastapiła DYLATACJA");
+
+    } else {
+        on_komunikatChange("Zmień obraz na czarno biały");
+    }
+
+}
+
+void MainWindow::on_komunikatChange(string komunikat)
+{
+    ui->label1->setText(QString::fromStdString(komunikat));
+
+}
+
+void MainWindow::on_erozja_clicked()
+{
+    if (czarnobialy == true) {
+        erozja();
+        on_komunikatChange("nastapiła EROZJA");
+
+    } else {
+        on_komunikatChange("Zmień obraz na czarno biały");
+    }
 }
