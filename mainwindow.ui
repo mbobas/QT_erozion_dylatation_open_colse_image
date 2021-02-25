@@ -172,6 +172,32 @@
       <string>EROZJA</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="otwarcie">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>190</y>
+       <width>91</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>OTWARCIE</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="domkniecie">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>220</y>
+       <width>91</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>DOMKNIĘCIE</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

@@ -50,6 +50,10 @@ private slots:
 
     void on_erozja_clicked();
 
+    void on_otwarcie_clicked();
+
+    void on_domkniecie_clicked();
+
 private:
     // ui to wskaźnik za pomocą którego mamy dostęp
     // do elementów interfejsu użytkownika
@@ -59,6 +63,8 @@ private:
     int width, height, startX, startY;
 
     bool czarnobialy = false;
+    bool otwarcie = true;
+    bool domkniecie = true;
 
     string komunikat  = "KOMUNIKAT";
 
